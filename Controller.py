@@ -2,16 +2,18 @@
 
 import re
 from Model import Student, Database
+from tkinter import simpledialog
 
 class StudentController:
     def __init__(self):
         self.students = Database.load_students()
 
-    def register_student(self, name, email, password):
+    def register_student(self, email, password):
         if not self.is_valid_email(email) or not self.is_valid_password(password):
             return "Invalid email or password format."
         if email in self.students:
             return "Student already registered."
+        name = simpledialog.askstring("Register", "Enter your name:")
         new_student = Student(name, email, password)
         self.students[email] = new_student
         Database.save_students(self.students)

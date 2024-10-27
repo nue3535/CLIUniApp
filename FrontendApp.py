@@ -81,16 +81,23 @@ class CLIUniAppGUI:
         messagebox.showinfo("Clear Data", result)
 
     def register_student(self):
-        name = simpledialog.askstring("Register", "Enter your name:")
         email = simpledialog.askstring("Register", "Enter your email:")
+        if not email:
+            return
         password = simpledialog.askstring("Register", "Enter your password:")
-        if name and email and password:
-            result = self.student_controller.register_student(name, email, password)
+        if not password:
+            return
+        if email and password:
+            result = self.student_controller.register_student(email, password)
             messagebox.showinfo("Register", result)
 
     def login_student(self):
         email = simpledialog.askstring("Login", "Enter your email:")
+        if not email:
+            return
         password = simpledialog.askstring("Login", "Enter your password:")
+        if not password:
+            return
         if email and password:
             student = self.student_controller.login_student(email, password)
             if student:
