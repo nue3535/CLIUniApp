@@ -88,7 +88,7 @@ class CLIUniAppGUI:
         if not password:
             return
         if email and password:
-            result = self.student_controller.register_student(email, password)
+            result = self.student_controller.register_student_gui(email, password)
             messagebox.showinfo("Register", result)
 
     def login_student(self):

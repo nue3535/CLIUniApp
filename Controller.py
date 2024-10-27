@@ -8,18 +8,38 @@ class StudentController:
     def __init__(self):
         self.students = Database.load_students()
 
-    def register_student(self, email, password):
+    def register_student_cli(self, email, password):
         if not self.is_valid_email(email) or not self.is_valid_password(password):
             return "Invalid email or password format."
+        print ("email and password formats acceptable")
+        if email in Database.load_students():
+            return "Student already registered."
+        name = input("Enter your name: ")
+        if not name:
+            return "Please enter your given name."
+        new_student = Student(name, email, password)
+        self.students[email] = new_student
+        Database.save_students(self.students)
+        return "Registration successful."
+
+    def register_student_gui(self, email, password):
+        if not self.is_valid_email(email) or not self.is_valid_password(password):
+            return "Invalid email or password format."
+        print ("email and password formats acceptable")
         if email in self.students:
+            # TODO: fix students.data methods so modify student's name here
             return "Student already registered."
         name = simpledialog.askstring("Register", "Enter your name:")
+        if not name:
+            return "Please enter your given name."
         new_student = Student(name, email, password)
         self.students[email] = new_student
         Database.save_students(self.students)
         return "Registration successful."
 
     def login_student(self, email, password):
+        if not self.is_valid_email(email) or not self.is_valid_password(password):
+            return "Invalid email or password format."
         student = self.students.get(email)
         if student and student.password == password:
             return student

@@ -6,9 +6,8 @@ import os
 
 # Subject class
 class Subject:
-    def __init__(self, name):
-        self.id = f"{random.randint(1, 999):03d}"
-        self.name = name
+    def __init__(self, id):
+        self.id = id
         self.mark = random.randint(25, 100)
         self.grade = self.calculate_grade()
     
@@ -33,11 +32,11 @@ class Student:
         self.password = password
         self.subjects = []
 
-    def enroll_subject(self, subject_name):
+    def enroll_subject(self, subject_id):
         if len(self.subjects) < 4:
-            new_subject = Subject(subject_name)
+            new_subject = Subject(subject_id)
             self.subjects.append(new_subject)
-            return f"Enrolled in {subject_name}"
+            return f"Enrolled in Subject-{subject_id}"
         else:
             return "You cannot enroll in more than 4 subjects."
 
@@ -45,7 +44,7 @@ class Student:
         self.subjects = [s for s in self.subjects if s.id != subject_id]
 
     def view_enrollments(self):
-        return [(subject.id, subject.name, subject.mark, subject.grade) for subject in self.subjects]
+        return [(subject.id, subject.mark, subject.grade) for subject in self.subjects]
 
     def change_password(self, new_password):
         self.password = new_password

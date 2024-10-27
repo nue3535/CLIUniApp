@@ -2,6 +2,7 @@
 
 from Controller import StudentController, AdminController
 from Model import Database
+import random
 
 def main():
     student_controller = StudentController()
@@ -68,26 +69,46 @@ def handle_admin_menu(admin_controller):
 def handle_student_menu(student_controller):
     while True:
         print("\nStudent Menu:")
-        print("(L) Login")
         print("(R) Register")
+        print("(L) Login")
         print("(X) Exit")
         choice = input("Select an option: ").strip().lower()
 
         if choice == 'r':
-            name = input("Enter your name: ")
-            email = input("Enter your email: ")
-            password = input("Enter your password: ")
-            result = student_controller.register_student(name, email, password)
-            print(result)
+            print("Student Sign Up")
+            while True:
+                email = input("Enter your email: ")
+                if not email:
+                    print("Please enter your given email.")
+                    continue
+                password = input("Enter your password: ")
+                if not password:
+                    print("Please enter your given password.")
+                    continue
+                result = student_controller.register_student_cli(email, password)
+                print(result)
+                if result == "Registration successful.":
+                    break
+                
         elif choice == 'l':
-            email = input("Enter your email: ")
-            password = input("Enter your password: ")
-            student = student_controller.login_student(email, password)
-            if student:
-                print("Login successful!")
-                handle_subject_enrollment(student, student_controller)
-            else:
-                print("Invalid email or password.")
+            print("Student Sign In")
+            while True:
+                email = input("Enter your email: ")
+                if not email:
+                    print("Please enter your given email.")
+                    continue
+                password = input("Enter your password: ")
+                if not password:
+                    print("Please enter your given password.")
+                    continue
+                student = student_controller.login_student(email, password)
+                if student:
+                    print("Login successful!")
+                    handle_subject_enrollment(student, student_controller)
+                    break
+                else:
+                    print("Invalid email or password.")
+                    continue
         elif choice == 'x':
             print("Exiting Student Menu.")
             break
@@ -105,27 +126,51 @@ def handle_subject_enrollment(student, student_controller):
         choice = input("Select an option: ").strip().lower()
 
         if choice == 'c':
-            new_password = input("Enter new password: ")
-            student.change_password(new_password)
-            student_controller.students[student.email] = student
-            Database.save_students(student_controller.students)
-            print("Password changed successfully.")
+            print("Updating Password")
+            while True:
+                new_password = input("Enter new password: ")
+                if StudentController.is_valid_password(new_password):
+                    while True:
+                        confirm_new_password = input("Confirm new password: ")
+                        if new_password == confirm_new_password:
+                            student.change_password(new_password)
+                            student_controller.students[student.email] = student
+                            Database.save_students(student_controller.students)
+                            print("Password changed successfully.")
+                            break
+                        else:
+                            print("Password does not match - try again")
+                            continue
+                else:
+                    print("Password does not valid - try again")
+                    continue
+                break
         elif choice == 'e':
-            subject_name = input("Enter the subject name to enroll: ")
-            result = student.enroll_subject(subject_name)
-            student_controller.students[student.email] = student
-            Database.save_students(student_controller.students)
-            print(result)
+            # subject_name = input("Enter the subject name to enroll: ")
+            enrollments = student.view_enrollments()
+            if len(enrollments) == 4:
+                print("Students are allowed to enroll in 4 subjects only")
+            else:
+                subject_id = f"{random.randint(1, 999):03d}"
+                result = student.enroll_subject(subject_id)
+                student_controller.students[student.email] = student
+                Database.save_students(student_controller.students)
+                print(result)
+                enrollments = student.view_enrollments()
+                print("You are now enrolled " + str(len(enrollments)) + " out of 4 subjects")
         elif choice == 'r':
             subject_id = input("Enter the subject ID to remove: ")
             student.remove_subject(subject_id)
             student_controller.students[student.email] = student
             Database.save_students(student_controller.students)
-            print(f"Subject with ID {subject_id} removed.")
+            print(f"Droping Subject-{subject_id}")
+            enrollments = student.view_enrollments()
+            print("You are now enrolled " + str(len(enrollments)) + " out of 4 subjects")
         elif choice == 's':
             enrollments = student.view_enrollments()
+            print("Showing " + str(len(enrollments)) + " subjects")
             for enrollment in enrollments:
-                print(f"ID: {enrollment[0]}, Name: {enrollment[1]}, Mark: {enrollment[2]}, Grade: {enrollment[3]}")
+                print(f"ID: {enrollment[0]}, Mark: {enrollment[1]}, Grade: {enrollment[2]}")
         elif choice == 'x':
             print("Exiting Subject Enrollment System.")
             break
