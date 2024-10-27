@@ -1,3 +1,8 @@
+# Controller.py
+
+import re
+from Model import Student, Database
+
 class StudentController:
     def __init__(self):
         self.students = Database.load_students()

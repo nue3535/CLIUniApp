@@ -1,9 +1,10 @@
+# Model.py
+
 import random
 import pickle
-import re
 import os
 
-# Define the Subject class
+# Subject class
 class Subject:
     def __init__(self, name):
         self.id = f"{random.randint(1, 999):03d}"
@@ -23,7 +24,7 @@ class Subject:
         else:
             return 'F'
 
-# Define the Student class
+# Student class
 class Student:
     def __init__(self, name, email, password):
         self.id = f"{random.randint(1, 999999):06d}"
@@ -49,7 +50,7 @@ class Student:
     def change_password(self, new_password):
         self.password = new_password
 
-# Define the Database class
+# Database class
 class Database:
     FILE_NAME = 'students.data'
 
