@@ -38,18 +38,24 @@ def handle_admin_menu(admin_controller):
 
         if choice == 's':
             students = admin_controller.view_all_students()
+            print("Student List")
             for student in students:
-                print(f"ID: {student[0]}, Name: {student[1]}, Email: {student[2]}")
+                print(f"{student[1]} :: {student[0]} --> Email: {student[2]}")
         elif choice == 'r':
-            email = input("Enter the email of the student to remove: ")
-            result = admin_controller.remove_student(email)
-            print(result)
+           
+            student_id = input("Remove by ID: ")
+            admin_controller.remove_student(student_id)
+           
         elif choice == 'g':
             groups = admin_controller.group_students()
+            print("Grade Grouping")
             for grade, students in groups.items():
-                print(f"\nGrade {grade}:")
-                for student in students:
-                    print(f"  - ID: {student.id}, Name: {student.name}")
+                if students:  # 檢查該分組是否有學生
+                    student_descriptions = [
+                        f"{student.name} :: {student.id} --> GRADE: {grade} - MARK: {admin_controller.calculate_average(student):.2f}"
+                        for student in students
+                    ]
+                    print(f"{grade} --> [{' , '.join(student_descriptions)}]")
         elif choice == 'p':
             partitions = admin_controller.partition_students()
             print("\nPass:")

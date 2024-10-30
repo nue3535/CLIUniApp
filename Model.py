@@ -48,7 +48,8 @@ class Student:
 
     def change_password(self, new_password):
         self.password = new_password
-
+    def __str__(self):
+        return f"{self.name} :: {self.id} - Subjects: {[(subject.id, subject.mark, subject.grade) for subject in self.subjects]}"
 # Database class
 class Database:
     FILE_NAME = 'students.data'

@@ -35,7 +35,7 @@ class StudentController:
         new_student = Student(name, email, password)
         self.students[email] = new_student
         Database.save_students(self.students)
-        return "Registration successful."
+        return "Registration successfulddds."
 
     def login_student(self, email, password):
         if not self.is_valid_email(email) or not self.is_valid_password(password):
@@ -57,12 +57,10 @@ class AdminController:
     def __init__(self):
         self.students = Database.load_students()
 
-    def remove_student(self, email):
-        if email in self.students:
-            del self.students[email]
-            Database.save_students(self.students)
-            return "Student removed."
-        return "Student not found."
+    def remove_student(self, student_id):
+        self.students = {email: s for email, s in self.students.items() if s.id != student_id}
+        Database.save_students(self.students)
+        print(f"Removed student {student_id}")
 
     def partition_students(self):
         pass_students = [s for s in self.students.values() if self.calculate_average(s) >= 50]
@@ -70,21 +68,25 @@ class AdminController:
         return {"Pass": pass_students, "Fail": fail_students}
 
     def group_students(self):
-        grouped = {}
+        grade_groups = {'HD': [], 'D': [], 'C': [], 'P': [], 'F': []}
         for student in self.students.values():
-            for subject in student.subjects:
-                grouped.setdefault(subject.grade, []).append(student)
-        return grouped
+            if student.subjects:  
+                average_grade = student.subjects[0].grade  
+                grade_groups[average_grade].append(student)
+            
+    
+        return grade_groups
 
     def calculate_average(self, student):
-        if len(student.subjects) == 0:
+        if not student.subjects:
             return 0
         return sum(subject.mark for subject in student.subjects) / len(student.subjects)
 
     def view_all_students(self):
+        self.students = Database.load_students()
         return [(s.id, s.name, s.email) for s in self.students.values()]
 
     def clear_all_students(self):
         Database.clear_data()
         self.students = {}
-        return "All student data cleared."
+        return "Student data cleared."
