@@ -2,48 +2,53 @@
 
 import re
 from Model import Student, Database
-from tkinter import simpledialog
+from colorama import Fore, Style, init 
+
+init(autoreset=True)
 
 class StudentController:
     def __init__(self):
         self.students = Database.load_students()
 
-    def register_student_cli(self, email, password):
+    def register_student(self, email, password):
         if not self.is_valid_email(email) or not self.is_valid_password(password):
-            return "Invalid email or password format."
-        print ("email and password formats acceptable")
-        if email in Database.load_students():
+            print (f"{Fore.RED}        Incorrect email or password format")
+            return "Incorrect email or password format"
+        else:
+            print (f"{Fore.YELLOW}        email and password formats acceptable")
+        if email in self.students:
+            existing_student = self.students[email]
+            print(f"{Fore.RED}        Student {existing_student.name} already registered")
             return "Student already registered."
-        name = input("Enter your name: ")
+        name = input("        Name: ")
         if not name:
-            return "Please enter your given name."
+            print (f"{Fore.RED}        Please enter your given name")
         new_student = Student(name, email, password)
         self.students[email] = new_student
         Database.save_students(self.students)
+        print(f"{Fore.YELLOW}        Enrolling Student {name}")
         return "Registration successful."
 
-    def register_student_gui(self, email, password):
-        if not self.is_valid_email(email) or not self.is_valid_password(password):
-            return "Invalid email or password format."
-        print ("email and password formats acceptable")
-        if email in self.students:
-            # TODO: fix students.data methods so modify student's name here
-            return "Student already registered."
-        name = simpledialog.askstring("Register", "Enter your name:")
-        if not name:
-            return "Please enter your given name."
-        new_student = Student(name, email, password)
-        self.students[email] = new_student
-        Database.save_students(self.students)
-        return "Registration successfulddds."
-
     def login_student(self, email, password):
+        self.students = Database.load_students()
         if not self.is_valid_email(email) or not self.is_valid_password(password):
-            return "Invalid email or password format."
+            print (f"{Fore.RED}        Incorrect email or password format")
+            return "Incorrect email or password format"
+        else:
+            print (f"{Fore.YELLOW}        email and password formats acceptable")
         student = self.students.get(email)
-        if student and student.password == password:
+        if student is None:
+            print(f"{Fore.RED}        Student does not exist")
+            return "Student does not exist"
+        
+        if student.password != password:
+            print(f"{Fore.RED}        Student does not exist")
+            return "Student does not exist"
+        
+        elif student.password == password:
             return student
-        return None
+        
+        
 
     @staticmethod
     def is_valid_email(email):
@@ -51,16 +56,21 @@ class StudentController:
 
     @staticmethod
     def is_valid_password(password):
-        return re.match(r"^[A-Z][a-zA-Z]{4,}\d{3,}$", password)
+        return re.match(r"^[A-Z][a-zA-Z]{5,}\d{3,}$", password)
 
 class AdminController:
     def __init__(self):
         self.students = Database.load_students()
 
     def remove_student(self, student_id):
-        self.students = {email: s for email, s in self.students.items() if s.id != student_id}
-        Database.save_students(self.students)
-        print(f"Removed student {student_id}")
+        self.students = Database.load_students()
+        if any(s.id == student_id for s in self.students.values()):
+            self.students = {email: s for email, s in self.students.items() if s.id != student_id}
+            Database.save_students(self.students)
+            print(f"{Fore.YELLOW}        Removing student {student_id} Account")
+            self.students = Database.load_students()
+        else:
+            print(f"{Fore.RED}        Student does not exist")
 
     def partition_students(self):
         pass_students = [s for s in self.students.values() if self.calculate_average(s) >= 50]
@@ -73,20 +83,17 @@ class AdminController:
             if student.subjects:  
                 average_grade = student.subjects[0].grade  
                 grade_groups[average_grade].append(student)
-            
-    
         return grade_groups
-
+    
     def calculate_average(self, student):
         if not student.subjects:
             return 0
         return sum(subject.mark for subject in student.subjects) / len(student.subjects)
-
+    
     def view_all_students(self):
         self.students = Database.load_students()
         return [(s.id, s.name, s.email) for s in self.students.values()]
 
     def clear_all_students(self):
         Database.clear_data()
-        self.students = {}
-        return "Student data cleared."
+        return f"{Fore.YELLOW}        Student data cleared"

@@ -1,8 +1,12 @@
+
 # Model.py
 
 import random
 import pickle
 import os
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 # Subject class
 class Subject:
@@ -36,10 +40,8 @@ class Student:
         if len(self.subjects) < 4:
             new_subject = Subject(subject_id)
             self.subjects.append(new_subject)
-            return f"Enrolled in Subject-{subject_id}"
-        else:
-            return "You cannot enroll in more than 4 subjects."
-
+            return f"{Fore.YELLOW}                Enrolling in Subject-{subject_id}"
+        
     def remove_subject(self, subject_id):
         self.subjects = [s for s in self.subjects if s.id != subject_id]
 
@@ -48,8 +50,7 @@ class Student:
 
     def change_password(self, new_password):
         self.password = new_password
-    def __str__(self):
-        return f"{self.name} :: {self.id} - Subjects: {[(subject.id, subject.mark, subject.grade) for subject in self.subjects]}"
+
 # Database class
 class Database:
     FILE_NAME = 'students.data'
@@ -58,6 +59,7 @@ class Database:
     def save_students(students):
         with open(Database.FILE_NAME, 'wb') as file:
             pickle.dump(students, file)
+        
 
     @staticmethod
     def load_students():
@@ -68,5 +70,7 @@ class Database:
 
     @staticmethod
     def clear_data():
-        if os.path.exists(Database.FILE_NAME):
-            os.remove(Database.FILE_NAME)
+        with open(Database.FILE_NAME, 'wb') as file:
+            pickle.dump({}, file)
+        
+        
