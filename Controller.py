@@ -1,5 +1,3 @@
-# Controller.py
-
 import re
 from Model import Student, Database
 from colorama import Fore, Style, init 
@@ -12,8 +10,9 @@ class StudentController:
 
     def register_student(self, email, password):
         if not self.is_valid_email(email) or not self.is_valid_password(password):
-            print (f"{Fore.RED}        Incorrect email or password format")
-            return "Incorrect email or password format"
+            # print (f"{Fore.RED}        Incorrect email or password format")
+            # return "Incorrect email or password format"
+            raise ValueError
         else:
             print (f"{Fore.YELLOW}        email and password formats acceptable")
         if email in self.students:
@@ -32,18 +31,19 @@ class StudentController:
     def login_student(self, email, password):
         self.students = Database.load_students()
         if not self.is_valid_email(email) or not self.is_valid_password(password):
-            print (f"{Fore.RED}        Incorrect email or password format")
-            return "Incorrect email or password format"
+            # print (f"{Fore.RED}        Incorrect email or password format")
+            raise ValueError
+            # return "Incorrect email or password format"
         else:
             print (f"{Fore.YELLOW}        email and password formats acceptable")
         student = self.students.get(email)
         if student is None:
-            print(f"{Fore.RED}        Student does not exist")
-            return "Student does not exist"
+            # print(f"{Fore.RED}        Student does not exist")
+            raise TypeError
         
         if student.password != password:
-            print(f"{Fore.RED}        Student does not exist")
-            return "Student does not exist"
+            # print(f"{Fore.RED}        Student does not exist")
+            raise TypeError
         
         elif student.password == password:
             return student

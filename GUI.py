@@ -4,7 +4,6 @@ import random
 from Controller import StudentController
 from Model import Database, Student
 
-
 class GUIUniApp:
     def __init__(self, root):
         self.root = root

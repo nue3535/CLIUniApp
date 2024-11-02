@@ -1,6 +1,3 @@
-
-# Model.py
-
 import random
 import pickle
 import os

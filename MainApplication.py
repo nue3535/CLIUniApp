@@ -1,5 +1,3 @@
-# MainApplication.py
-
 from Controller import StudentController, AdminController
 from Model import Database
 import random
@@ -47,7 +45,7 @@ def handle_admin_menu(admin_controller):
                 print("        <Nothing to Display>")
             else:
                 for grade, students in groups.items():
-                     if students:  # 檢查該分組是否有學生
+                     if students:  # check if the students exist
                         student_descriptions = [
                             f"{student.name} :: {student.id} --> GRADE: {grade} - MARK: {admin_controller.calculate_average(student):.2f}"
                             for student in students
@@ -85,7 +83,6 @@ def handle_admin_menu(admin_controller):
 def handle_student_menu(student_controller):
    while True:
         choice = input(f"{Fore.CYAN}        Student System (l/r/x): {Style.RESET_ALL}")
-
         if choice == 'r':
             print(f"{Fore.GREEN}        Student Sign Up")
             while True:
@@ -97,11 +94,17 @@ def handle_student_menu(student_controller):
                 if not password:
                     print(f"{Fore.RED}        Please enter your given password.")
                     continue
-                result = student_controller.register_student(email, password)
-                if result == "Student already registered.":
-                    break
-                elif result == "Registration successful.":
-                      break  
+
+                try:
+                    result = student_controller.register_student(email, password)
+                    if result == "Student already registered.":
+                        break
+                    elif result == "Registration successful.":
+                        break
+                except ValueError:
+                    print (f"{Fore.RED}        Incorrect email or password format (r)")
+                finally:
+                    continue
         elif choice == 'l':
             print(f"{Fore.GREEN}        Student Sign In")
             while True:
@@ -113,14 +116,25 @@ def handle_student_menu(student_controller):
                 if not password:
                     print(f"{Fore.RED}        Please enter your given password.")
                     continue
-                result = student_controller.login_student(email, password)
-                if result == "Incorrect email or password format":
+
+                try:
+                    result = student_controller.login_student(email, password)
+                    if isinstance(result, Student):
+                        handle_subject_enrollment(result, student_controller)
+                        break
+                except ValueError:
+                    print(f"{Fore.RED}        Incorrect email or password format (l)")
+                except TypeError:
+                    print(f"{Fore.RED}        Student does not exist (l)")
+                finally:
                     continue
-                if isinstance(result, Student) :
-                    handle_subject_enrollment(result, student_controller)
-                    break
-                elif result == "Student does not exist":
-                    break
+                # if result == "Incorrect email or password format":
+                #     continue
+                # if isinstance(result, Student) :
+                #     handle_subject_enrollment(result, student_controller)
+                #     break
+                # elif result == "Student does not exist":
+                #     break
         elif choice == 'x':
             break
         else:
