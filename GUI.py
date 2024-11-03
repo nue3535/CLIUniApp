@@ -3,6 +3,7 @@ from tkinter import messagebox
 import random
 from Controller import StudentController
 from Model import Database, Student
+import re
 
 class GUIUniApp:
     def __init__(self, root):
@@ -33,17 +34,16 @@ class GUIUniApp:
         if not email or not password:
             messagebox.showerror("Error", "Both fields are required!")
             return
-        result = self.student_controller.login_student(email, password)
-        if isinstance(result, Student):
-            self.current_student = result
-            self.create_enrollment_window()
-        elif result == "Incorrect email or password format":
+        try:
+            result = self.student_controller.login_student(email, password)
+            if isinstance(result, Student):
+                self.current_student = result
+                self.create_enrollment_window()
+        except ValueError:
             messagebox.showerror("Error", "Invalid email or password format.")
-        elif result == "Student does not exist":
+        except TypeError:
             messagebox.showerror("Error", "Student does not exist.")
-        else:
-            messagebox.showerror("Error", "Login failed. Please check your credentials.")
-
+        
     def create_enrollment_window(self):
         self.clear_widget()
 
@@ -62,12 +62,16 @@ class GUIUniApp:
             return
 
         subject_id = f"{random.randint(1, 999):03d}"  
+        
         result = self.current_student.enroll_subject(subject_id)
+        result = re.sub(r'\x1b\[[0-9;]*m', '', result).strip()
         
         self.student_controller.students[self.current_student.email] = self.current_student
         Database.save_students(self.student_controller.students)
 
         messagebox.showinfo("Enrollment Success", result)
+    
+
 
     def view_enrollments(self):
         self.clear_widget()
