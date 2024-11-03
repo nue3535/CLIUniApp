@@ -84,53 +84,53 @@ def handle_admin_menu(admin_controller):
             print(f"{Fore.RED}        Invalid choice, please try again.")
 
 def handle_student_menu(student_controller):
-   while True:
+    while True:
         choice = input(f"{Fore.CYAN}        Student System (l/r/x): {Style.RESET_ALL}")
         if choice == 'r':
             print(f"{Fore.GREEN}        Student Sign Up")
-            while True:
-                email = input("        Email: ")
-                if not email:
-                    print(f"{Fore.RED}        Please enter your given email.")
-                    continue
-                password = input("        Password: ")
-                if not password:
-                    print(f"{Fore.RED}        Please enter your given password.")
-                    continue
+            # while True:
+            email = input("        Email: ")
+            if not email:
+                print(f"{Fore.RED}        Please enter your given email.")
+                continue
+            password = input("        Password: ")
+            if not password:
+                print(f"{Fore.RED}        Please enter your given password.")
+                continue
 
-                try:
-                    result = student_controller.register_student(email, password)
-                    if result == "Student already registered.":
-                        break
-                    elif result == "Registration successful.":
-                        break
-                except ValueError:
-                    print (f"{Fore.RED}        Incorrect email or password format (r)")
-                finally:
-                    continue
+            try:
+                result = student_controller.register_student(email, password)
+                if result == "Student already registered.":
+                    break
+                elif result == "Registration successful.":
+                    break
+            except ValueError:
+                print (f"{Fore.RED}        Incorrect email or password format (r)")
+            finally:
+                continue
         elif choice == 'l':
             print(f"{Fore.GREEN}        Student Sign In")
-            while True:
-                email = input("        Email: ")
-                if not email:
-                    print(f"{Fore.RED}        Please enter your given email.")
-                    continue
-                password = input("        Password: ")
-                if not password:
-                    print(f"{Fore.RED}        Please enter your given password.")
-                    continue
+            # while True:
+            email = input("        Email: ")
+            if not email:
+                print(f"{Fore.RED}        Please enter your given email.")
+                continue
+            password = input("        Password: ")
+            if not password:
+                print(f"{Fore.RED}        Please enter your given password.")
+                continue
 
-                try:
-                    result = student_controller.login_student(email, password)
-                    if isinstance(result, Student):
-                        handle_subject_enrollment(result, student_controller)
-                        break
-                except ValueError:
-                    print(f"{Fore.RED}        Incorrect email or password format (l)")
-                except TypeError:
-                    print(f"{Fore.RED}        Student does not exist (l)")
-                finally:
-                    continue
+            try:
+                result = student_controller.login_student(email, password)
+                if isinstance(result, Student):
+                    handle_subject_enrollment(result, student_controller)
+                    break
+            except ValueError:
+                print(f"{Fore.RED}        Incorrect email or password format (l)")
+            except TypeError:
+                print(f"{Fore.RED}        Student does not exist (l)")
+            finally:
+                continue
                 # if result == "Incorrect email or password format":
                 #     continue
                 # if isinstance(result, Student) :
@@ -149,23 +149,23 @@ def handle_subject_enrollment(student, student_controller):
         
         if choice == 'c':
             print(f"{Fore.YELLOW}                Updating Password")
-            while True:
-                new_password = input("                New password: ")
-                if StudentController.is_valid_password(new_password):
-                    while True:
-                        confirm_new_password = input("                Confirm password: ")
-                        if new_password == confirm_new_password:
-                            student.change_password(new_password)
-                            student_controller.students[student.email] = student
-                            Database.save_students(student_controller.students)
-                            break
-                        else:
-                            print(f"{Fore.RED}                Password does not match - try again")
-                            continue
-                else:
-                    print(f"{Fore.RED}                Incorrect password format")
-                    continue
-                break
+            # while True:
+            new_password = input("                New password: ")
+            if StudentController.is_valid_password(new_password):
+                # while True:
+                    confirm_new_password = input("                Confirm password: ")
+                    if new_password == confirm_new_password:
+                        student.change_password(new_password)
+                        student_controller.students[student.email] = student
+                        Database.save_students(student_controller.students)
+                        break
+                    else:
+                        print(f"{Fore.RED}                Password does not match - try again")
+                        continue
+            else:
+                print(f"{Fore.RED}                Incorrect password format")
+                continue
+            break
         elif choice == 'e':
             enrollments = student.view_enrollments()
             subject_id = f"{random.randint(1, 999):03d}"
