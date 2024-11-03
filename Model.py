@@ -34,13 +34,19 @@ class Student:
         self.subjects = []
 
     def enroll_subject(self, subject_id):
-        if len(self.subjects) < 4:
+        enrollments = self.view_enrollments()
+        if len(enrollments) == 4:
+            # print(f"{Fore.RED}                Students are allowed to enrol in 4 subjects only")
+            raise ValueError
+        elif len(self.subjects) < 4:
             new_subject = Subject(subject_id)
             self.subjects.append(new_subject)
             return f"{Fore.YELLOW}                Enrolling in Subject-{subject_id}"
         
     def remove_subject(self, subject_id):
         self.subjects = [s for s in self.subjects if s.id != subject_id]
+        if len(self.subjects) == 4:
+            raise ValueError
 
     def view_enrollments(self):
         return [(subject.id, subject.mark, subject.grade) for subject in self.subjects]

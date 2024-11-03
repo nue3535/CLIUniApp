@@ -37,7 +37,10 @@ def handle_admin_menu(admin_controller):
                     print(f"        {student[1]} :: {student[0]} --> Email: {student[2]}")
         elif choice == 'r':
             student_id = input("        Remove by ID: ")
-            admin_controller.remove_student(student_id)
+            try:
+                admin_controller.remove_student(student_id)
+            except TypeError:
+                print(f"{Fore.RED}        Student does not exist (te)")
         elif choice == 'g':
             groups = admin_controller.group_students()
             print(f"{Fore.YELLOW}        Grade Grouping")
@@ -165,19 +168,24 @@ def handle_subject_enrollment(student, student_controller):
                 break
         elif choice == 'e':
             enrollments = student.view_enrollments()
-            if len(enrollments) == 4:
-                print(f"{Fore.RED}                Students are allowed to enrol in 4 subjects only")
-            else:
-                subject_id = f"{random.randint(1, 999):03d}"
+            subject_id = f"{random.randint(1, 999):03d}"
+            try:
                 result = student.enroll_subject(subject_id)
-                student_controller.students[student.email] = student
-                Database.save_students(student_controller.students)
-                print(result)
-                enrollments = student.view_enrollments()
-                print(f"{Fore.YELLOW}                You are now enrolled in " + str(len(enrollments)) + " out of 4 subjects")
+            except ValueError:
+                print(f"{Fore.RED}                Students are allowed to enrol in 4 subjects only (ve)")
+                continue
+            student_controller.students[student.email] = student
+            Database.save_students(student_controller.students)
+            print(result)
+            enrollments = student.view_enrollments()
+            print(f"{Fore.YELLOW}                You are now enrolled in " + str(len(enrollments)) + " out of 4 subjects")
         elif choice == 'r':
             subject_id = input("                Remove subject by ID: ")
-            student.remove_subject(subject_id)
+            try:
+                student.remove_subject(subject_id)
+            except ValueError:
+                print(f"{Fore.RED}                Invalid subject ID, please try again. (ve)")
+                continue
             student_controller.students[student.email] = student
             Database.save_students(student_controller.students)
             print(f"{Fore.YELLOW}                Droping Subject-{subject_id}")

@@ -70,7 +70,8 @@ class AdminController:
             print(f"{Fore.YELLOW}        Removing student {student_id} Account")
             self.students = Database.load_students()
         else:
-            print(f"{Fore.RED}        Student does not exist")
+            # print(f"{Fore.RED}        Student does not exist")
+            raise TypeError
 
     def partition_students(self):
         pass_students = [s for s in self.students.values() if self.calculate_average(s) >= 50]
