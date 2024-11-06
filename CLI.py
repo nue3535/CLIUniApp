@@ -190,7 +190,7 @@ def handle_subject_enrollment(student, student_controller):
             Database.save_students(student_controller.students)
             print(f"{Fore.YELLOW}                Droping Subject-{subject_id}")
             enrollments = student.view_enrollments()
-            print(f"{Fore.YELLOW}                You are now enrolled " + str(len(enrollments)) + " out of 4 subjects")
+            print(f"{Fore.YELLOW}                You are now enrolled in " + str(len(enrollments)) + " out of 4 subjects")
         elif choice == 's':
             enrollments = student.view_enrollments()
             print(f"{Fore.YELLOW}                Showing " + str(len(enrollments)) + " subjects")
