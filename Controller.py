@@ -74,11 +74,13 @@ class AdminController:
             raise TypeError
 
     def partition_students(self):
+        self.students = Database.load_students()
         pass_students = [s for s in self.students.values() if self.calculate_average(s) >= 50]
         fail_students = [s for s in self.students.values() if self.calculate_average(s) < 50]
         return {"Pass": pass_students, "Fail": fail_students}
 
     def group_students(self):
+        self.students = Database.load_students()
         grade_groups = {'HD': [], 'D': [], 'C': [], 'P': [], 'F': []}
         for student in self.students.values():
             if student.subjects:  
