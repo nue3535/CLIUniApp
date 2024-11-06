@@ -22,6 +22,7 @@ class StudentController:
         name = input("        Name: ")
         if not name:
             print (f"{Fore.RED}        Please enter your given name")
+            return "Please enter your given name"
         new_student = Student(name, email, password)
         self.students[email] = new_student
         Database.save_students(self.students)
