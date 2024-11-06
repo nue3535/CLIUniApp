@@ -158,14 +158,13 @@ def handle_subject_enrollment(student, student_controller):
                         student.change_password(new_password)
                         student_controller.students[student.email] = student
                         Database.save_students(student_controller.students)
-                        break
+                        continue
                     else:
                         print(f"{Fore.RED}                Password does not match - try again")
                         continue
             else:
                 print(f"{Fore.RED}                Incorrect password format")
                 continue
-            break
         elif choice == 'e':
             enrollments = student.view_enrollments()
             subject_id = f"{random.randint(1, 999):03d}"
